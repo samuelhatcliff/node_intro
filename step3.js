@@ -3,12 +3,12 @@ const axios = require('axios');
 let out;
 
 async function master () {
-    let path = process.argv[2];
+    path = process.argv[2];
     if (path === "--out") {
         out = true;
         const toRead = process.argv[4];
         await determine(toRead);
-        process.exit(0);
+   
     }
     else {
         determine(path)
@@ -39,25 +39,26 @@ function write (data) {
 
 
 
+
 function cat (path) {
   console.log('inside cat function')
   //FUNCTION STOPS HERE
-    return fs.readFile(path, 'utf8', function(err, data) {
-    console.log("inside readfile function")
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    else {
-        console.log(`file contents: ${data}`);
-        if (out === true) {
-            write(data)
-        }
-        else {
-            process.exit(0);
-        }
-        
-    }
+  fs.readFile(path, 'utf8', function(err, data) {
+  console.log("inside readfile function")
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
+  else {
+      console.log(`file contents: ${data}`);
+      if (out === true) {
+          write(data)
+      }
+      else {
+        console.log('not out')
+          process.exit(0);
+      }
+  }
 })
 }
 
@@ -72,7 +73,7 @@ async function webCat(url) {
         
       if (out === true) {
         console.log("Inside 'out' in webcat 'try' block")
-        await write(resp.data);
+        write(resp.data);
     }
     } catch (err) {
       console.error(`Error fetching ${url}: ${err}`);
