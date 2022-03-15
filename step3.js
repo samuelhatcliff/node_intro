@@ -1,20 +1,27 @@
 const fs = require('fs');
 const axios = require('axios');
-
 let out;
 
-function master () {
+async function master () {
     let path = process.argv[2];
     if (path === "--out") {
         out = true;
         const toRead = process.argv[4];
-        determine(toRead);
+        await determine(toRead);
         process.exit(0);
     }
     else {
         determine(path)
     }
 }
+
+async function determine (path) {
+  if (path.slice(0, 4) === 'http') {
+    await webCat(path);
+  } else {
+    cat(path);
+  }
+  }
 
 function write (data) {
     const outputFile = process.argv[3];
@@ -29,16 +36,12 @@ function write (data) {
       });
 }
 
-function determine (path) {
-if (path.slice(0, 4) === 'http') {
-  webCat(path);
-} else {
-   cat(path);
-}
-}
+
 
 
 function cat (path) {
+  console.log('inside cat function')
+  //FUNCTION STOPS HERE
     return fs.readFile(path, 'utf8', function(err, data) {
     console.log("inside readfile function")
     if (err) {
@@ -62,14 +65,14 @@ function cat (path) {
 
 async function webCat(url) {
     console.log(url)
-    console.log('inside url function')
+    console.log('inside webcat url function')
     try {
       let resp = await axios.get(url);
       console.log(resp.data);
         
       if (out === true) {
-        console.log("AFSDASDFASDFAS")
-        write(resp.data);
+        console.log("Inside 'out' in webcat 'try' block")
+        await write(resp.data);
     }
     } catch (err) {
       console.error(`Error fetching ${url}: ${err}`);
